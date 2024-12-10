@@ -1,46 +1,66 @@
 package it.unibo.es1;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class LogicsImpl implements Logics {
+	private final static int MAX_BUTTON_VALUE = 4;
+
+	private final int size;
+	private final List<Integer> buttonList;
+	private final List<Boolean> buttonEnabled;
 
 	public LogicsImpl(int size) {
-		//TODO Auto-generated constructor stub
+		this.size = size;
+		this.buttonList = IntStream
+			.range(0, this.size)
+			.mapToObj(i -> 0)
+			.collect(Collectors.toCollection(ArrayList::new));
+		this.buttonEnabled = IntStream
+			.range(0, this.size)
+			.mapToObj(i -> true)
+			.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'size'");
+		return this.size;
 	}
 
 	@Override
 	public List<Integer> values() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'values'");
+		return List.copyOf(this.buttonList);
 	}
 
 	@Override
 	public List<Boolean> enablings() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'enablings'");
+		return List.copyOf(this.buttonEnabled);
 	}
 
 	@Override
 	public int hit(int elem) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'hit'");
+		this.buttonList.set(elem, this.buttonList.get(elem) + 1);
+		if(this.buttonList.get(elem) == MAX_BUTTON_VALUE){
+			this.buttonEnabled.set(elem,false);
+		}
+		return this.buttonList.get(elem);
 	}
 
 	@Override
 	public String result() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'result'");
+		final StringBuilder result = new StringBuilder();
+		result.append("<<");
+		for (int i = 0; i < this.size; i++) {
+			result.append(this.buttonList.get(i) + (i < this.size-1?"|":""));
+		}
+		result.append(">>");
+		return result.toString();
 	}
 
 	@Override
 	public boolean toQuit() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'toQuit'");
+		return this.buttonList.stream().allMatch(i -> i.equals(this.buttonList.get(0)));
 	}
 }
